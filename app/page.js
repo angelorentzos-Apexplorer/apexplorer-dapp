@@ -15,7 +15,7 @@ const raleway = Raleway({ subsets: ['latin'], weight: ['300'] });
 const TOKEN_ADDR = '0x54053AAcc934a95679582E6e990a9e718E96E6E1'; // AXPR Token
 const STAKING_ADDR = '0xdeC85326147C79c2b06a27f8C50AFe7662869a5d'; // Staking Contract
 const RPC_URL = "https://bsc-dataseed.binance.org/";
-const PINKSALE_LINK = "#"; // <--- ΘΥΜΗΣΟΥ ΝΑ ΤΟ ΑΛΛΑΞΕΙΣ ΟΤΑΝ ΕΧΕΙΣ ΤΟ LINK
+const PINKSALE_LINK = "#"; // <--- ΒΑΛΕ ΤΟ LINK ΜΟΛΙΣ ΤΟ ΕΧΕΙΣ
 
 // --- ABIS ---
 const STAKING_ABI = [
@@ -283,19 +283,31 @@ export default function Home() {
       setAmount(userBalance);
   };
 
-  // --- TX HANDLERS (UPDATED FOR MOBILE) ---
+  // --- TX HANDLERS (OPTIMIZED FOR MOBILE & SECURITY) ---
   const handleApprove = async () => {
     if (!signer) return;
+    
+    // 1️⃣ ΕΛΕΓΧΟΣ: Πρέπει να έχει βάλει ποσό
+    if (!amount || isNaN(amount) || Number(amount) <= 0) {
+        alert("Παρακαλώ εισάγετε πρώτα το ποσό που θέλετε να κάνετε Stake.");
+        return;
+    }
+
     setLoading(true);
 
-    // 📢 Ειδοποίηση για το κινητό
-    alert("⚠️ ΠΡΟΣΟΧΗ:\n\nΤώρα θα ανοίξει το Πορτοφόλι σας.\nΠαρακαλώ πατήστε 'Confirm' ή 'Approve' εκεί.");
+    // 📢 Ειδοποίηση για Mobile + Security
+    alert(`⚠️ ΠΡΟΣΟΧΗ:\n\nΘα ζητηθεί έγκριση για ${amount} AXPR.\nΠαρακαλώ ελέγξτε το Πορτοφόλι σας και πατήστε 'Confirm'.`);
 
     try {
       const token = new ethers.Contract(TOKEN_ADDR, TOKEN_ABI, signer);
-      const tx = await token.approve(STAKING_ADDR, ethers.MaxUint256);
       
-      alert("⏳ Η εντολή στάλθηκε! Περιμένετε...");
+      // 2️⃣ SECURITY UPDATE: Approve Exact Amount (Όχι Unlimited)
+      // Αυτό μειώνει τα "risk warnings" του MetaMask
+      const amountToApprove = ethers.parseUnits(amount, 18);
+      
+      const tx = await token.approve(STAKING_ADDR, amountToApprove);
+      
+      alert("⏳ Η εντολή Approve στάλθηκε! Περιμένετε...");
       
       await tx.wait(); 
       alert("✅ Approved Successfully! Τώρα πατήστε STAKE.");
@@ -315,7 +327,7 @@ export default function Home() {
     }
     setLoading(true);
 
-    // 📢 Ειδοποίηση για το κινητό
+    // 📢 Ειδοποίηση για Mobile
     alert("⚠️ ΠΡΟΣΟΧΗ:\n\nΕλέγξτε το Πορτοφόλι σας για να επιβεβαιώσετε το Staking.");
 
     try {
