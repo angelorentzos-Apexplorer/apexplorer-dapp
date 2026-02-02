@@ -12,8 +12,8 @@ const zenDots = Zen_Dots({ subsets: ['latin'], weight: ['400'] });
 const raleway = Raleway({ subsets: ['latin'], weight: ['300'] });
 
 // --- CONFIGURATION ---
-const TOKEN_ADDR = '0x54053AAcc934a95679582E6e990a9e718E96E6E1'; // AXPR Token (Diamond Master V3.2)
-const STAKING_ADDR = '0xdeC85326147C79c2b06a27f8C50AFe7662869a5d'; // Staking Contract (V3.4)
+const TOKEN_ADDR = '0x54053AAcc934a95679582E6e990a9e718E96E6E1'; // AXPR Token
+const STAKING_ADDR = '0xdeC85326147C79c2b06a27f8C50AFe7662869a5d'; // Staking Contract
 const RPC_URL = "https://bsc-dataseed.binance.org/";
 const PINKSALE_LINK = "#"; // <--- ΘΥΜΗΣΟΥ ΝΑ ΤΟ ΑΛΛΑΞΕΙΣ ΟΤΑΝ ΕΧΕΙΣ ΤΟ LINK
 
@@ -283,17 +283,27 @@ export default function Home() {
       setAmount(userBalance);
   };
 
-  // --- TX HANDLERS ---
+  // --- TX HANDLERS (UPDATED FOR MOBILE) ---
   const handleApprove = async () => {
     if (!signer) return;
     setLoading(true);
+
+    // 📢 Ειδοποίηση για το κινητό
+    alert("⚠️ ΠΡΟΣΟΧΗ:\n\nΤώρα θα ανοίξει το Πορτοφόλι σας.\nΠαρακαλώ πατήστε 'Confirm' ή 'Approve' εκεί.");
+
     try {
       const token = new ethers.Contract(TOKEN_ADDR, TOKEN_ABI, signer);
       const tx = await token.approve(STAKING_ADDR, ethers.MaxUint256);
+      
+      alert("⏳ Η εντολή στάλθηκε! Περιμένετε...");
+      
       await tx.wait(); 
-      alert("✅ Approved Successfully!");
+      alert("✅ Approved Successfully! Τώρα πατήστε STAKE.");
       setIsApproved(true);
-    } catch (e) { alert("❌ Approval Failed"); }
+    } catch (e) { 
+        console.error(e);
+        alert("❌ Η έγκριση ακυρώθηκε."); 
+    }
     setLoading(false);
   };
 
@@ -304,9 +314,16 @@ export default function Home() {
         return;
     }
     setLoading(true);
+
+    // 📢 Ειδοποίηση για το κινητό
+    alert("⚠️ ΠΡΟΣΟΧΗ:\n\nΕλέγξτε το Πορτοφόλι σας για να επιβεβαιώσετε το Staking.");
+
     try {
       const stakeContract = new ethers.Contract(STAKING_ADDR, STAKING_ABI, signer);
       const tx = await stakeContract.stake(tier, ethers.parseUnits(amount, 18));
+      
+      alert("⏳ Η συναλλαγή Stake στάλθηκε!");
+      
       await tx.wait(); 
       alert("✅ Staked Successfully!");
       setAmount('');
@@ -315,8 +332,8 @@ export default function Home() {
     } catch (e) { 
         console.error(e);
         const msg = (e?.reason || e?.shortMessage || e?.message || "").toLowerCase();
-        if (msg.includes("insufficient rewards") || msg.includes("pool underfunded")) {
-            alert("❌ Pool has insufficient rewards reserved. Admin refill required.");
+        if (msg.includes("insufficient rewards")) {
+            alert("❌ Pool has insufficient rewards reserved.");
         } else {
             alert("❌ Stake Failed. Check console.");
         }
