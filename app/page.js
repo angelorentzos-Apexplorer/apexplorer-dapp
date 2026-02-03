@@ -15,7 +15,7 @@ const raleway = Raleway({ subsets: ['latin'], weight: ['300'] });
 const TOKEN_ADDR = '0x54053AAcc934a95679582E6e990a9e718E96E6E1'; // AXPR Token
 const STAKING_ADDR = '0xdeC85326147C79c2b06a27f8C50AFe7662869a5d'; // Staking Contract
 const RPC_URL = "https://bsc-dataseed.binance.org/";
-const PINKSALE_LINK = "#"; // <--- ΒΑΛΕ ΤΟ LINK ΜΟΛΙΣ ΤΟ ΕΧΕΙΣ
+const PINKSALE_LINK = "#"; 
 
 // --- ABIS ---
 const STAKING_ABI = [
@@ -94,25 +94,17 @@ const PositionCard = ({ position, onWithdraw, onEmergency, loading }) => {
 
     return (
         <div className="mt-4 p-5 bg-blue-900/10 rounded-3xl border border-blue-500/20 backdrop-blur-md shadow-inner animate-fade-in relative overflow-hidden">
-            {/* ID Badge */}
             <div className="absolute top-0 right-0 bg-blue-600/20 px-3 py-1 rounded-bl-xl text-[8px] text-blue-300 font-bold border-l border-b border-blue-500/30 font-mono">
                 ID: #{Number(position.realIndex) + 1}
             </div>
-
-            {/* Header */}
             <div className="flex justify-between items-center mb-4">
                 <p className={`${zenDots.className} text-blue-400 text-[10px] tracking-[0.2em] uppercase`}>
                     {position.apy}% Fixed Plan
                 </p>
                 <div className={`h-2 w-2 rounded-full shadow-[0_0_10px] ${!isLocked ? 'bg-green-500 shadow-green-500' : 'bg-amber-500 shadow-amber-500'} animate-pulse`}></div>
             </div>
-
-            {/* Timer Box */}
             <div className="mb-5 text-center p-3 bg-black/40 rounded-2xl border border-white/5 relative overflow-hidden">
-                <div 
-                    className="absolute inset-0 bg-blue-500/20 transition-all duration-1000 ease-linear" 
-                    style={{ width: `${progressPercent.toFixed(2)}%` }} 
-                ></div>
+                <div className="absolute inset-0 bg-blue-500/20 transition-all duration-1000 ease-linear" style={{ width: `${progressPercent.toFixed(2)}%` }}></div>
                 <div className="relative z-10">
                     <p className="text-[9px] text-gray-500 uppercase font-light tracking-widest mb-1">Time Remaining</p>
                     <p style={{...timesStyle, fontSize: '1.1rem'}} className={`tracking-normal zen_dots ${!isLocked ? 'text-green-400' : 'text-white'}`}>
@@ -120,8 +112,6 @@ const PositionCard = ({ position, onWithdraw, onEmergency, loading }) => {
                     </p>
                 </div>
             </div>
-
-            {/* Stats */}
             <div className="space-y-3 text-[12px] font-light mb-5">
                 <div className="flex justify-between text-gray-400 border-b border-white/5 pb-2 uppercase tracking-tight">
                     Staked: <span style={{...timesStyle}} className="text-white text-sm">{formatNum(ethers.formatUnits(position.amount, 18))} AXPR</span>
@@ -135,31 +125,9 @@ const PositionCard = ({ position, onWithdraw, onEmergency, loading }) => {
                 </div>
                 <p className="text-[8px] text-gray-600 text-right italic">*Paid upon unlock</p>
             </div>
-
-            {/* Actions */}
             <div className="grid grid-cols-1 gap-2">
-                <button 
-                    onClick={() => onWithdraw(position.realIndex)} 
-                    disabled={loading || isLocked} 
-                    className={`w-full py-3 rounded-xl font-medium border text-[10px] uppercase tracking-[0.2em] transition-all
-                    ${isLocked 
-                        ? 'bg-gray-800/50 text-gray-500 border-gray-700 cursor-not-allowed' 
-                        : 'bg-green-900/20 border-green-500/30 text-green-400 hover:bg-green-900/40 hover:text-white shadow-[0_0_15px_rgba(34,197,94,0.2)]'}`}
-                >
-                    {isLocked ? "LOCKED" : "CLAIM REWARDS & UNSTAKE"}
-                </button>
-
-                <button 
-                    onClick={() => {
-                        if(confirm("⚠️ WARNING: Emergency Withdraw forfeits ALL rewards. You only get your principal back. Continue?")) {
-                            onEmergency(position.realIndex);
-                        }
-                    }} 
-                    disabled={loading}
-                    className="w-full py-2 rounded-xl font-medium border border-red-500/10 text-[9px] text-red-500/60 hover:text-red-400 hover:bg-red-900/20 hover:border-red-500/30 transition-all uppercase tracking-widest"
-                >
-                    Emergency Exit
-                </button>
+                <button onClick={() => onWithdraw(position.realIndex)} disabled={loading || isLocked} className={`w-full py-3 rounded-xl font-medium border text-[10px] uppercase tracking-[0.2em] transition-all ${isLocked ? 'bg-gray-800/50 text-gray-500 border-gray-700 cursor-not-allowed' : 'bg-green-900/20 border-green-500/30 text-green-400 hover:bg-green-900/40 hover:text-white shadow-[0_0_15px_rgba(34,197,94,0.2)]'}`}>{isLocked ? "LOCKED" : "CLAIM REWARDS & UNSTAKE"}</button>
+                <button onClick={() => { if(confirm("⚠️ WARNING: Emergency Withdraw forfeits ALL rewards. You only get your principal back. Continue?")) { onEmergency(position.realIndex); }}} disabled={loading} className="w-full py-2 rounded-xl font-medium border border-red-500/10 text-[9px] text-red-500/60 hover:text-red-400 hover:bg-red-900/20 hover:border-red-500/30 transition-all uppercase tracking-widest">Emergency Exit</button>
             </div>
         </div>
     );
@@ -167,11 +135,8 @@ const PositionCard = ({ position, onWithdraw, onEmergency, loading }) => {
 
 // --- MAIN PAGE ---
 export default function Home() {
-  // 🟢 FIX: PREVENT HYDRATION ERROR (indexedDB)
   const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  useEffect(() => { setMounted(true); }, []);
 
   const [activeTab, setActiveTab] = useState('STAKE'); 
   const [amount, setAmount] = useState('');
@@ -179,35 +144,47 @@ export default function Home() {
   const [userStakes, setUserStakes] = useState([]); 
   const [loading, setLoading] = useState(false);
   const [isApproved, setIsApproved] = useState(false);
-  
-  // Stats
   const [tokenPrice, setTokenPrice] = useState(0);
   const [userBalance, setUserBalance] = useState('0');
   const [marketCap, setMarketCap] = useState(0);
 
   const { address, isConnected } = useAccount();
   const signer = useEthersSigner(); 
-
-  // --- MEMOIZED PROVIDER ---
   const provider = useMemo(() => new ethers.JsonRpcProvider(RPC_URL), []);
 
-  // --- REFRESH DATA ---
+  // --- NEW: ADD TOKEN TO WALLET FUNCTION ---
+  const addTokenToWallet = async () => {
+    if (!window.ethereum) return;
+    try {
+      await window.ethereum.request({
+        method: 'wallet_watchAsset',
+        params: {
+          type: 'ERC20',
+          options: {
+            address: TOKEN_ADDR,
+            symbol: 'AXPR', 
+            decimals: 18, 
+            image: '', // Αν έχεις URL εικόνας βάλτο εδώ π.χ. 'https://.../logo.png'
+          },
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const refreshData = async () => {
     if(!address) return;
-    
     try {
         const token = new ethers.Contract(TOKEN_ADDR, TOKEN_ABI, provider);
         const bal = await token.balanceOf(address);
         setUserBalance(ethers.formatUnits(bal, 18));
     } catch(e) { }
-
     try {
         const staking = new ethers.Contract(STAKING_ADDR, STAKING_ABI, provider);
         const positions = await staking.getUserPositions(address);
-        
         const apys = { 0: "8", 1: "12", 2: "16" };
         const activeStakes = [];
-
         for (let i = 0; i < positions.length; i++) {
             if (!positions[i].withdrawn) {
                 activeStakes.push({
@@ -226,15 +203,10 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if (isConnected && address) {
-        refreshData();
-    } else {
-        setUserStakes([]);
-        setUserBalance('0');
-    }
+    if (isConnected && address) refreshData();
+    else { setUserStakes([]); setUserBalance('0'); }
   }, [address, isConnected, provider]);
 
-  // --- STATS LOOP ---
   useEffect(() => {
     const fetchStats = async () => {
         try {
@@ -252,24 +224,15 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  // --- ALLOWANCE CHECK ---
   useEffect(() => {
-    if (!isConnected || !address || !amount) {
-        setIsApproved(false);
-        return;
-    }
-    const timeoutId = setTimeout(() => {
-        checkAllowance();
-    }, 500); 
+    if (!isConnected || !address || !amount) { setIsApproved(false); return; }
+    const timeoutId = setTimeout(() => { checkAllowance(); }, 500); 
     return () => clearTimeout(timeoutId);
   }, [amount, address, isConnected, provider]);
 
   const checkAllowance = async () => {
     try {
-        if (!amount || isNaN(amount) || Number(amount) <= 0) {
-            setIsApproved(false);
-            return;
-        }
+        if (!amount || isNaN(amount) || Number(amount) <= 0) { setIsApproved(false); return; }
         const tokenContract = new ethers.Contract(TOKEN_ADDR, TOKEN_ABI, provider);
         const allowance = await tokenContract.allowance(address, STAKING_ADDR);
         const amountWei = ethers.parseUnits(amount, 18);
@@ -278,64 +241,34 @@ export default function Home() {
     } catch (e) { }
   };
 
-  const handleMax = () => {
-      if(!userBalance || userBalance === '0') return;
-      setAmount(userBalance);
-  };
+  const handleMax = () => { if(!userBalance || userBalance === '0') return; setAmount(userBalance); };
 
-  // --- TX HANDLERS (OPTIMIZED FOR MOBILE & SECURITY) ---
   const handleApprove = async () => {
     if (!signer) return;
-    
-    // 1️⃣ ΕΛΕΓΧΟΣ: Πρέπει να έχει βάλει ποσό
-    if (!amount || isNaN(amount) || Number(amount) <= 0) {
-        alert("Παρακαλώ εισάγετε πρώτα το ποσό που θέλετε να κάνετε Stake.");
-        return;
-    }
-
+    if (!amount || isNaN(amount) || Number(amount) <= 0) { alert("Please enter amount first."); return; }
     setLoading(true);
-
-    // 📢 Ειδοποίηση για Mobile + Security
-    alert(`⚠️ ΠΡΟΣΟΧΗ:\n\nΘα ζητηθεί έγκριση για ${amount} AXPR.\nΠαρακαλώ ελέγξτε το Πορτοφόλι σας και πατήστε 'Confirm'.`);
-
+    alert(`⚠️ NOTICE:\n\nPlease confirm approval for ${amount} AXPR in your wallet.`);
     try {
       const token = new ethers.Contract(TOKEN_ADDR, TOKEN_ABI, signer);
-      
-      // 2️⃣ SECURITY UPDATE: Approve Exact Amount (Όχι Unlimited)
-      // Αυτό μειώνει τα "risk warnings" του MetaMask
       const amountToApprove = ethers.parseUnits(amount, 18);
-      
       const tx = await token.approve(STAKING_ADDR, amountToApprove);
-      
-      alert("⏳ Η εντολή Approve στάλθηκε! Περιμένετε...");
-      
+      alert("⏳ Approving...");
       await tx.wait(); 
-      alert("✅ Approved Successfully! Τώρα πατήστε STAKE.");
+      alert("✅ Approved!");
       setIsApproved(true);
-    } catch (e) { 
-        console.error(e);
-        alert("❌ Η έγκριση ακυρώθηκε."); 
-    }
+    } catch (e) { console.error(e); alert("❌ Approval Cancelled."); }
     setLoading(false);
   };
 
   const handleStake = async () => {
     if (!signer) return;
-    if (!amount || isNaN(amount) || Number(amount) <= 0) {
-        alert("Please enter a valid amount greater than 0");
-        return;
-    }
+    if (!amount || isNaN(amount) || Number(amount) <= 0) { alert("Invalid amount"); return; }
     setLoading(true);
-
-    // 📢 Ειδοποίηση για Mobile
-    alert("⚠️ ΠΡΟΣΟΧΗ:\n\nΕλέγξτε το Πορτοφόλι σας για να επιβεβαιώσετε το Staking.");
-
+    alert("⚠️ NOTICE:\n\nPlease confirm transaction in your wallet.");
     try {
       const stakeContract = new ethers.Contract(STAKING_ADDR, STAKING_ABI, signer);
       const tx = await stakeContract.stake(tier, ethers.parseUnits(amount, 18));
-      
-      alert("⏳ Η συναλλαγή Stake στάλθηκε!");
-      
+      alert("⏳ Staking...");
       await tx.wait(); 
       alert("✅ Staked Successfully!");
       setAmount('');
@@ -344,11 +277,8 @@ export default function Home() {
     } catch (e) { 
         console.error(e);
         const msg = (e?.reason || e?.shortMessage || e?.message || "").toLowerCase();
-        if (msg.includes("insufficient rewards")) {
-            alert("❌ Pool has insufficient rewards reserved.");
-        } else {
-            alert("❌ Stake Failed. Check console.");
-        }
+        if (msg.includes("insufficient rewards")) alert("❌ Pool underfunded.");
+        else alert("❌ Stake Failed.");
     }
     setLoading(false);
   };
@@ -362,9 +292,7 @@ export default function Home() {
       await tx.wait(); 
       alert("🎉 Claimed!");
       refreshData();
-    } catch (e) { 
-        alert("❌ Withdraw Failed."); 
-    }
+    } catch (e) { alert("❌ Withdraw Failed."); }
     setLoading(false);
   };
 
@@ -377,35 +305,28 @@ export default function Home() {
       await tx.wait(); 
       alert("⚠️ Emergency Exit Successful.");
       refreshData();
-    } catch (e) { 
-        alert("❌ Emergency Failed."); 
-    }
+    } catch (e) { alert("❌ Emergency Failed."); }
     setLoading(false);
   };
 
-  // 🟢 FIX: Return NULL if on server to avoid indexedDB error
   if (!mounted) return null;
 
   return (
     <div className={`relative min-h-screen flex items-center justify-center bg-black text-white px-4 overflow-hidden ${raleway.className}`}>
-      
-      <div className="absolute inset-0 z-0 flex items-center justify-center opacity-30 pointer-events-none" 
-        style={{ backgroundImage: "url('/logo.png')", backgroundSize: '70%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center' }}>
-      </div>
-
+      <div className="absolute inset-0 z-0 flex items-center justify-center opacity-30 pointer-events-none" style={{ backgroundImage: "url('/logo.png')", backgroundSize: '70%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center' }}></div>
       <div className="relative z-10 w-full max-w-md p-6 bg-black/60 backdrop-blur-3xl rounded-[3rem] shadow-[0_0_80px_rgba(0,0,0,0.9)] border border-white/10 flex flex-col items-center max-h-[90vh] overflow-y-auto custom-scrollbar">
         
-        <div className="mb-4 shrink-0">
-          <img src="/logo.png" alt="Apex" className="w-24 h-24 object-contain" />
-        </div>
+        <div className="mb-4 shrink-0"><img src="/logo.png" alt="Apex" className="w-24 h-24 object-contain" /></div>
+        <h1 className={`${zenDots.className} text-lg text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600 mb-4 text-center shrink-0`}>ApeXplorer App</h1>
 
-        <h1 className={`${zenDots.className} text-lg text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600 mb-4 text-center shrink-0`}>
-          ApeXplorer App
-        </h1>
-
-        <div className="mb-6 scale-90 shrink-0">
-            <ConnectButton showBalance={false} />
-        </div>
+        <div className="mb-2 scale-90 shrink-0"><ConnectButton showBalance={false} /></div>
+        
+        {/* 🆕 NEW BUTTON: ADD TO WALLET */}
+        {isConnected && (
+            <button onClick={addTokenToWallet} className="mb-6 text-[10px] text-gray-400 hover:text-white flex items-center gap-1 border border-white/10 px-3 py-1 rounded-full transition-colors">
+                🦊 Add AXPR to Wallet
+            </button>
+        )}
 
         <div className={`flex w-full bg-white/5 rounded-full p-1 mb-6 shrink-0 transition-all duration-500 ${!isConnected ? 'opacity-30 pointer-events-none grayscale' : 'opacity-100'}`}>
             <button onClick={() => setActiveTab('STAKE')} className={`flex-1 py-2 rounded-full text-[10px] font-bold tracking-widest transition-all ${activeTab === 'STAKE' ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}>STAKE</button>
@@ -427,103 +348,54 @@ export default function Home() {
                             <div className="space-y-3">
                                 <div className="space-y-1">
                                     <label className="text-[10px] text-gray-400 ml-2 uppercase tracking-wider">Amount (AXPR)</label>
-                                    <input 
-                                        type="number" 
-                                        min="0" 
-                                        placeholder="0.0" 
-                                        className="w-full px-4 py-3 bg-black/40 border border-white/10 rounded-xl text-white outline-none focus:border-blue-500 transition-colors" 
-                                        value={amount} 
-                                        onChange={(e) => {
-                                            if (Number(e.target.value) >= 0) setAmount(e.target.value);
-                                        }} 
-                                    />
-                                    <div className="text-right pr-2">
-                                        <button onClick={handleMax} className="text-[9px] text-blue-400 cursor-pointer hover:text-white uppercase tracking-widest hover:underline">
-                                            Max: {formatNum(userBalance)}
-                                        </button>
-                                    </div>
+                                    <input type="number" min="0" placeholder="0.0" className="w-full px-4 py-3 bg-black/40 border border-white/10 rounded-xl text-white outline-none focus:border-blue-500 transition-colors" value={amount} onChange={(e) => { if (Number(e.target.value) >= 0) setAmount(e.target.value); }} />
+                                    <div className="text-right pr-2"><button onClick={handleMax} className="text-[9px] text-blue-400 cursor-pointer hover:text-white uppercase tracking-widest hover:underline">Max: {formatNum(userBalance)}</button></div>
                                 </div>
                                 <div className="space-y-1">
                                     <label className="text-[10px] text-gray-400 ml-2 uppercase tracking-wider">Lock Plan</label>
-                                    <select className="w-full px-4 py-3 bg-black/40 border border-white/10 rounded-xl text-white outline-none cursor-pointer hover:bg-white/5 transition-colors" 
-                                    value={tier} onChange={(e) => setTier(Number(e.target.value))}>
+                                    <select className="w-full px-4 py-3 bg-black/40 border border-white/10 rounded-xl text-white outline-none cursor-pointer hover:bg-white/5 transition-colors" value={tier} onChange={(e) => setTier(Number(e.target.value))}>
                                         <option value={0}>2 Months — 8% Fixed Return</option>
                                         <option value={1}>4 Months — 12% Fixed Return</option>
                                         <option value={2}>6 Months — 16% Fixed Return</option>
                                     </select>
                                 </div>
                                 <div className="grid grid-cols-2 gap-3 pt-2">
-                                    <button onClick={handleApprove} disabled={loading || isApproved} className={`py-3 rounded-xl font-bold text-[10px] tracking-widest border transition-all duration-300 ${isApproved ? 'bg-gray-800 text-green-500 border-green-500/30' : 'bg-amber-600 text-white border-amber-500/20 hover:bg-amber-500'}`}>
-                                        {loading ? "..." : (isApproved ? "APPROVED" : "APPROVE")}
-                                    </button>
-                                    <button onClick={handleStake} disabled={loading || !isApproved} className={`py-3 rounded-xl font-bold text-[10px] tracking-widest border transition-all duration-300 ${isApproved ? 'bg-green-600 text-white border-green-500/50 hover:bg-green-500 shadow-[0_0_20px_rgba(22,163,74,0.4)]' : 'bg-gray-800 text-gray-500 border-white/5'}`}>
-                                        STAKE
-                                    </button>
+                                    <button onClick={handleApprove} disabled={loading || isApproved} className={`py-3 rounded-xl font-bold text-[10px] tracking-widest border transition-all duration-300 ${isApproved ? 'bg-gray-800 text-green-500 border-green-500/30' : 'bg-amber-600 text-white border-amber-500/20 hover:bg-amber-500'}`}>{loading ? "..." : (isApproved ? "APPROVED" : "APPROVE")}</button>
+                                    <button onClick={handleStake} disabled={loading || !isApproved} className={`py-3 rounded-xl font-bold text-[10px] tracking-widest border transition-all duration-300 ${isApproved ? 'bg-green-600 text-white border-green-500/50 hover:bg-green-500 shadow-[0_0_20px_rgba(22,163,74,0.4)]' : 'bg-gray-800 text-gray-500 border-white/5'}`}>STAKE</button>
                                 </div>
                             </div>
                         </div>
-
                         {userStakes.length > 0 && (
                             <div className="w-full">
-                                <div className="flex items-center gap-2 mb-2 ml-2">
-                                    <div className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse"></div>
-                                    <p className="text-[10px] text-gray-400 uppercase tracking-widest">Your Active Stakes</p>
-                                </div>
-                                {userStakes.map((stake) => (
-                                    <PositionCard 
-                                        key={stake.realIndex} 
-                                        position={stake} 
-                                        onWithdraw={handleWithdraw} 
-                                        onEmergency={handleEmergencyWithdraw}
-                                        loading={loading}
-                                    />
-                                ))}
+                                <div className="flex items-center gap-2 mb-2 ml-2"><div className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse"></div><p className="text-[10px] text-gray-400 uppercase tracking-widest">Your Active Stakes</p></div>
+                                {userStakes.map((stake) => (<PositionCard key={stake.realIndex} position={stake} onWithdraw={handleWithdraw} onEmergency={handleEmergencyWithdraw} loading={loading} />))}
                             </div>
                         )}
                     </div>
                 )}
-
                 {activeTab === 'BUY' && (
                     <div className="w-full animate-fade-in flex flex-col items-center">
                          <div className="w-full p-4 mb-4 bg-gradient-to-r from-pink-600/20 to-purple-600/20 border border-pink-500/30 rounded-2xl text-center">
                             <p className="text-[10px] text-pink-300 uppercase tracking-widest mb-2">Presale Phase</p>
                             <p className="text-xs text-gray-300 mb-3">Liquidity will be added soon. Buy via PinkSale.</p>
-                            <a href={PINKSALE_LINK} target="_blank" className="block w-full py-3 bg-pink-600 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-pink-500 transition-all text-white shadow-[0_0_15px_rgba(219,39,119,0.4)]">
-                                Go to PinkSale
-                            </a>
+                            <a href={PINKSALE_LINK} target="_blank" className="block w-full py-3 bg-pink-600 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-pink-500 transition-all text-white shadow-[0_0_15px_rgba(219,39,119,0.4)]">Go to PinkSale</a>
                         </div>
                         <div className="w-full h-[300px] border border-white/5 rounded-2xl bg-black/40 flex flex-col items-center justify-center text-gray-600">
-                             <div className="text-4xl mb-2">🥞</div>
-                             <p className="text-[10px] uppercase tracking-widest">PancakeSwap Trading</p>
-                             <p className="text-[9px] mt-1">Coming After Launch</p>
+                             <div className="text-4xl mb-2">🥞</div><p className="text-[10px] uppercase tracking-widest">PancakeSwap Trading</p><p className="text-[9px] mt-1">Coming After Launch</p>
                         </div>
                     </div>
                 )}
-
                 {activeTab === 'TRACK' && (
                     <div className="w-full animate-fade-in space-y-4">
                         <div className="p-5 bg-gradient-to-br from-gray-900 to-black rounded-3xl border border-white/10 shadow-xl">
                             <p className="text-[9px] text-gray-500 uppercase tracking-widest mb-1">Your Portfolio Value</p>
-                            <h2 className={`${zenDots.className} text-3xl text-white mb-4`}>
-                                ${(Number(userBalance) * tokenPrice).toFixed(2)}
-                            </h2>
+                            <h2 className={`${zenDots.className} text-3xl text-white mb-4`}>${(Number(userBalance) * tokenPrice).toFixed(2)}</h2>
                             <div className="grid grid-cols-2 gap-4">
-                                <div className="p-3 bg-white/5 rounded-2xl border border-white/5">
-                                    <p className="text-[8px] text-gray-400 uppercase">Holdings</p>
-                                    <p className="text-sm font-bold text-blue-400">{formatNum(userBalance)} AXPR</p>
-                                </div>
-                                <div className="p-3 bg-white/5 rounded-2xl border border-white/5">
-                                    <p className="text-[8px] text-gray-400 uppercase">AXPR Price</p>
-                                    <p className="text-sm font-bold text-green-400">${tokenPrice > 0 ? tokenPrice.toFixed(6) : '---'}</p>
-                                </div>
+                                <div className="p-3 bg-white/5 rounded-2xl border border-white/5"><p className="text-[8px] text-gray-400 uppercase">Holdings</p><p className="text-sm font-bold text-blue-400">{formatNum(userBalance)} AXPR</p></div>
+                                <div className="p-3 bg-white/5 rounded-2xl border border-white/5"><p className="text-[8px] text-gray-400 uppercase">AXPR Price</p><p className="text-sm font-bold text-green-400">${tokenPrice > 0 ? tokenPrice.toFixed(6) : '---'}</p></div>
                             </div>
                         </div>
-                        <div className="w-full rounded-3xl overflow-hidden border border-white/10 h-[300px] relative bg-black/50">
-                            <iframe 
-                                src={`https://dexscreener.com/bsc/${TOKEN_ADDR}?embed=1&theme=dark&trades=0&info=0`}
-                                width="100%" height="100%" frameBorder="0"
-                            ></iframe>
-                        </div>
+                        <div className="w-full rounded-3xl overflow-hidden border border-white/10 h-[300px] relative bg-black/50"><iframe src={`https://dexscreener.com/bsc/${TOKEN_ADDR}?embed=1&theme=dark&trades=0&info=0`} width="100%" height="100%" frameBorder="0"></iframe></div>
                     </div>
                 )}
             </>
